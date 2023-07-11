@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  labels:
+    codefresh.io/entity: internal-config
+    codefresh.io/internal: 'true'
+  name: remote-cluster
+spec:
+  destination:
+    namespace: runtime
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    directory:
+      include: >-
+        {all-runtimes-all-clusters/*.yaml,all-runtimes-all-clusters/**/*.yaml,runtimes/runtime1/*.yaml,runtimes/runtime1/**/*.yaml}
+      recurse: true
+    path: resources
+    repoURL: https://github.com/codefresh-contrib/example-shared-config-repo.git
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      allowEmpty: true
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - allowEmpty=true
